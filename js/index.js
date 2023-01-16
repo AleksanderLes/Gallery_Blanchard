@@ -22,7 +22,25 @@ btns.forEach(item => {
             this.classList.toggle(activeClassbtns);
         })
     })
-    /* scrolbar */
+    /*Скрытие менюшки при клике вне ее*/
+document.addEventListener("click", function(e) {
+    let target = e.target;
+    let dropdowns = document.querySelectorAll(".dropdown");
+    let btns = document.querySelectorAll(".menu__link");
+    dropdowns.forEach(el => {
+        if (!target.closest(".menu__item")) {
+            el.classList.remove("dropdown__active");
+        }
+    });
+    btns.forEach(el => {
+        if (!target.closest(".menu__item")) {
+            el.classList.remove("link__active");
+        }
+    });
+})
+
+
+/* scrolbar */
 document.querySelectorAll(".dropdown__simplebar").forEach(dropdown => {
     new SimpleBar(dropdown, {
         /* чтобы изначально ползунок был виден */
@@ -32,10 +50,13 @@ document.querySelectorAll(".dropdown__simplebar").forEach(dropdown => {
     });
 })
 
+
+
 /* Кастомный селект */
 const element = document.querySelector('#selectCustom');
 const choices = new Choices(element, {
     searchEnabled: false,
+    renderSelectedChoices: 'none',
     itemSelectText: '',
     position: 'bottom',
 });
@@ -111,7 +132,7 @@ new Swiper('.gallery__swiper', {
 });
 
 /*  swiper events */
-const swiper = new Swiper('.events__swiper', {
+let swiper = new Swiper('.events__swiper', {
 
     autoHeight: true,
     loop: false,
@@ -139,21 +160,51 @@ const swiper = new Swiper('.events__swiper', {
             slidesPerView: 3,
             spaceBetween: 31,
             slidesPerGroup: 3,
+
         },
         1200: {
             slidesPerView: 3,
             spaceBetween: 50,
             slidesPerGroup: 3,
         },
+
     },
 
+    a11y: false,
+    keyboard: {
+        enabled: true,
+        onlyInViewport: true
+    }, // можно управлять с клавиатуры стрелками влево/вправо
+
+    observer: true,
+    observeParents: true,
+    observeSlideChildren: true,
+
+
+    on: {
+        //   /* исправляет баг с margin-top остающимся при смене брейкпоинта, это было нужно в 6-й версии свайпера */
+        beforeResize: function() {
+            this.slides.forEach((el) => {
+                el.style.marginTop = "";
+            });
+        }
+    }
 });
+
+//window.addEventListener('resize', function(e) {
+//  swiper.height = clientHeight
+//})
+
+swiper.update();
+swiper.updateSize()
+swiper.updateAutoHeight(100);
+
 
 /*  swiper projects */
 new Swiper('.projects__swiper', {
 
 
-    loop: true,
+    // loop: true,
     navigation: {
         nextEl: '.projects__btn-next',
         prevEl: '.projects__btn-prev',
@@ -248,6 +299,13 @@ new JustValidate('#form', {
     },
 });
 
+/* tooltip */
+tippy('[data-tippy-content]', {
+    placement: 'top',
+    animation: 'scale',
+});
+
+
 /* map */
 
 // Функция ymaps.ready() будет вызвана, когда
@@ -329,19 +387,19 @@ menulinks.forEach(function(el) {
 
 /* search */
 
-let btnOpen = document.querySelector('.search-open');
+let btnOpen = document.querySelector('.header__search-open');
 let inputSearch = document.querySelector('.search-top');
-let closeSearch = document.querySelector('.search__btn-close');
+let closeSearch = document.querySelector('.header__btn-close');
 let btnSearch = document.querySelector('.search__btn');
 
 
 btnOpen.addEventListener('click', function() {
     inputSearch.classList.add('search-top--active');
-    btnOpen.classList.add('search-open--deactive');
+    btnOpen.classList.add('header__search-open--deactive');
     inputSearch.querySelector("input").value = "";
 })
 closeSearch.addEventListener('click', function() {
     inputSearch.querySelector("input").value = "";
     inputSearch.classList.remove('search-top--active');
-    btnOpen.classList.remove('search-open--deactive');
+    btnOpen.classList.remove('header__search-open--deactive');
 })
